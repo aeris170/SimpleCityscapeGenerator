@@ -1,7 +1,7 @@
 # SimpleCityscapeGenerator
 
 ## Live Demo:
-See the live demo at: [My Website](doga.oruc.ug.bilkent.edu.tr/cityscapeGenerator/Executable/ASS1.html)
+See the live demo at: [My Website](http://doga.oruc.ug.bilkent.edu.tr/cityscapeGenerator/Executable/ASS1.html)
 
 A simple cityscape generator. Written using plain WebGL. Draws numerous primitives onto the screen like quads, triangles, circles etc.
 
