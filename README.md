@@ -1,4 +1,4 @@
-# SimpleCityscapeGenerator
+# Simple Cityscape Generator
 
 ## Live Demo:
 See the live demo at: [My Website](http://doga.oruc.ug.bilkent.edu.tr/cityscapeGenerator/Executable/ASS1.html)
