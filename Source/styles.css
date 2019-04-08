@@ -1,0 +1,60 @@
+.green-button{
+  color: black;
+  border: 1px dashed;
+  border-color: rgb(40, 40, 40);
+  background: rgba(28, 184, 65, 0.7);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  font-size: 90%;
+  font-weight: bolder;
+  padding: 8px 20px;
+  border-radius: 8px;
+}
+
+.upload-btn-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.upload-btn-wrapper input[type=file] {
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+}
+
+.green-input{
+  color: rgb(21, 171, 0);
+  border: none;
+  background: rgb(40, 40, 40);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  font-size: 85%;
+  font-weight: bolder;
+  width: 60px;
+}
+
+a:link {
+  color: rgb(255, 102, 102);
+}
+
+a:visited {
+  color: rgb(255, 102, 102);
+}
+
+a:active {
+  color: rgb(255, 102, 0);
+}
+
+body {
+  font-family: 'Eczar', serif;
+  background-color: rgb(40, 40, 40);
+  color: rgb(21, 171, 0);
+  margin: 10px;
+  margin-right: %90;
+}
+
+h1 {
+  font-family: 'Eczar', serif;
+  color: rgb(255, 200, 45);
+}

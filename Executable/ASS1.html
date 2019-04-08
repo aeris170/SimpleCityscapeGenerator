@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>CS465 - Simple Cityspace Generator</title>
+  <link rel="stylesheet" type="text/css" href="../../lib/normalize/normalize.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/base.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/base-context.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/base-context-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/buttons.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/buttons-core.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/buttons-core-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/buttons-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/forms.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/forms-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/forms-nr.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/forms-nr-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/grids.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/grids-core.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/grids-core-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/grids-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/grids-responsive.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/grids-responsive-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/grids-responsive-old-ie.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/grids-responsive-old-ie-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/grids-units.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/grids-units-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus-core.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus-core-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus-dropdown.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus-dropdown-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus-horizontal.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus-horizontal-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus-scrollable.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus-scrollable-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus-skin.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/menus-skin-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/pure.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/pure-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/pure-nr.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/pure-nr-min.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/tables.css">
+  <link rel="stylesheet" type="text/css" href="../../lib/pure/tables-min.css">
+  <link rel="stylesheet" type="text/css" href="../Source/styles.css">
+  <link rel="shortcut icon" href="../../favicon/favicon.ico">
+  <link rel="icon" sizes="16x16 32x32 64x64" href="../../favicon/favicon.ico">
+  <link rel="icon" type="image/png" sizes="196x196" href="../../favicon/favicon-192.png">
+  <link rel="icon" type="image/png" sizes="160x160" href="../../favicon/favicon-160.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="../../favicon/favicon-96.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="../../favicon/favicon-64.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../favicon/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../../favicon/favicon-16.png">
+  <link rel="apple-touch-icon" href="../../favicon/favicon-57.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="../../favicon/favicon-114.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="../../favicon/favicon-72.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="../../favicon/favicon-144.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="../../favicon/favicon-60.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="../../favicon/favicon-120.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="../../favicon/favicon-76.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="../../favicon/favicon-152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="../../favicon/favicon-180.png">
+  <meta name="msapplication-TileColor" content="#FFFFFF">
+  <meta name="msapplication-TileImage" content="../../favicon/favicon-144.png">
+  <meta name="msapplication-config" content="../../favicon/browserconfig.xml">
+  <script id="terrainVShader" type="x-shader/x-vertex">
+    precision mediump float;
+		attribute vec4 vPosition;
+		void main() {
+  			gl_Position = vPosition;
+		}
+		</script>
+  <script id="terrainFShader" type="x-shader/x-fragment">
+		//For simplex noise source: https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
+		precision mediump float;
+		uniform float isDay;
+
+		vec3 mod289(vec3 x) {
+			return x - floor(x * (1.0 / 289.0)) * 289.0;
+		}
+
+		vec2 mod289(vec2 x) {
+		  return x - floor(x * (1.0 / 289.0)) * 289.0;
+		}
+
+		vec3 permute(vec3 x) {
+		  return mod289(((x*34.0)+1.0)*x);
+		}
+
+		float snoise(vec2 v) {
+			const vec4 C = vec4(0.211324865405187,  // (3.0 - sqrt(3.0)) / 6.0
+							0.366025403784439,  // 0.5 * (sqrt(3.0) - 1.0)
+							-0.577350269189626,  // -1.0 + 2.0 * C.x
+							0.024390243902439); // 1.0 / 41.0
+			// First corner
+			vec2 i = floor(v + dot(v, C.yy));
+			vec2 x0 = v - i + dot(i, C.xx);
+
+			// Other corners
+		  	vec2 i1;
+		  	//i1.x = step( x0.y, x0.x ); // x0.x > x0.y ? 1.0 : 0.0
+		  	//i1.y = 1.0 - i1.x;
+		  	i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+		  	// x0 = x0 - 0.0 + 0.0 * C.xx ;
+		  	// x1 = x0 - i1 + 1.0 * C.xx ;
+			// x2 = x0 - 1.0 + 2.0 * C.xx ;
+			vec4 x12 = x0.xyxy + C.xxzz;
+			x12.xy -= i1;
+
+			// Permutations
+		  	i = mod289(i); // Avoid truncation effects in permutation
+		  	vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+						+ i.x + vec3(0.0, i1.x, 1.0 ));
+
+		  	vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+			m = m*m ;
+			m = m*m ;
+
+			// Gradients: 41 points uniformly over a line, mapped onto a diamond.
+			// The ring size 17*17 = 289 is close to a multiple of 41 (41*7 = 287)
+
+			vec3 x = 2.0 * fract(p * C.www) - 1.0;
+		  	vec3 h = abs(x) - 0.5;
+			vec3 ox = floor(x + 0.5);
+		  	vec3 a0 = x - ox;
+
+			// Normalise gradients implicitly by scaling m
+			// Approximation of: m *= inversesqrt( a0*a0 + h*h );
+		  	m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+
+			// Compute final noise value at P
+		  	vec3 g;
+		  	g.x  = a0.x  * x0.x  + h.x  * x0.y;
+		  	g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+		  	return 130.0 * dot(m, g);
+		}
+
+		void main() {
+			float noise = snoise(vec2(snoise(vec2(gl_FragCoord.x, gl_FragCoord.y)), snoise(vec2(gl_FragCoord.y, gl_FragCoord.y))));
+			if(isDay == 0.0) {
+				gl_FragColor = vec4(noise - 0.1, 0.31, 0.0, 1.0);
+			} else {
+				gl_FragColor = vec4(noise - 0.6, 0.1, 0.0, 1.0);
+			}
+		}
+		</script>
+  <script id="sunVShader" type="x-shader/x-vertex">
+    precision mediump float;
+		attribute vec4 vPosition;
+		void main() {
+			gl_Position = vPosition;
+		}
+		</script>
+  <script id="sunFShader" type="x-shader/x-fragment">
+    precision mediump float;
+		uniform float isDay;
+		void main() {
+			if(isDay == 0.0) {
+				gl_FragColor = vec4(0.9, 0.7, 0.0, 1.0);
+            } else {
+				gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+			}
+		}
+		</script>
+  <script id="cloudVShader" type="x-shader/x-vertex">
+    precision mediump float;
+		attribute vec4 vPosition;
+		void main() {
+			gl_Position = vPosition;
+		}
+		</script>
+  <script id="cloudFShader" type="x-shader/x-fragment">
+    precision mediump float;
+		void main(){
+			gl_FragColor = vec4(0.75, 0.77, 0.8, 1.0);
+		}
+		</script>
+  <script id="houseVShader" type="x-shader/x-vertex">
+    precision mediump float;
+		attribute vec4 vPosition;
+		attribute vec4 vColor;
+		attribute float nightWindowColorFlag;
+		varying vec4 fColor;
+		varying float passedNightWindowColorFlag;
+		void main(){
+			passedNightWindowColorFlag = nightWindowColorFlag;
+			fColor = vColor;
+			gl_Position = vPosition;
+		}
+		</script>
+  <script id="houseFShader" type="x-shader/x-fragment">
+    precision mediump float;
+		uniform float isDay;
+		varying vec4 fColor;
+		varying float passedNightWindowColorFlag;
+		void main(){
+			if(isDay == 0.0) {
+				gl_FragColor = fColor;
+			} else {
+				vec3 color;
+				if(fColor == vec4(0.7, 0.8, 0.9, 1.0)) {
+					if(passedNightWindowColorFlag < 0.5) {
+						color = vec3(0.7, 0.7, 0.0);
+					} else {
+						color = vec3(0.0, 0.0, 0.0);
+					}
+				} else if(fColor == vec4(1.0, 0.0, 0.0, 1.0)) {
+					color = vec3(0.2, 0.0, 0.0);
+				} else {
+					color = vec3(max(fColor.r - 0.4, 0.0), max(fColor.g - 0.4, 0.0), max(fColor.b - 0.4, 0.0));
+				}
+				gl_FragColor = vec4(color, fColor.a);
+			}
+		}
+		</script>
+  <script id="bobbleTrunkVShader" type="x-shader/x-vertex">
+    precision mediump float;
+		attribute vec4 vPosition;
+		void main(){
+			gl_Position = vPosition;
+		}
+		</script>
+  <script id="bobbleTrunkFShader" type="x-shader/x-fragment">
+    precision mediump float;
+		uniform float isDay;
+		void main(){
+			if(isDay == 0.0) {
+				gl_FragColor = vec4(0.5, 0.2, 0.05, 1.0);
+			} else {
+				gl_FragColor = vec4(0.3, 0.1, 0.05, 1.0);
+			}
+		}
+		</script>
+  <script id="bobbleLeafVShader" type="x-shader/x-vertex">
+    precision mediump float;
+		attribute vec4 vPosition;
+		void main(){
+			gl_Position = vPosition;
+		}
+		</script>
+  <script id="bobbleLeafFShader" type="x-shader/x-fragment">
+    precision mediump float;
+		uniform float isDay;
+		void main(){
+			if(isDay == 0.0) {
+				gl_FragColor = vec4(0.6, 0.8, 0.3, 1.0);
+			} else {
+				gl_FragColor = vec4(0.3, 0.4, 0.05, 1.0);
+			}
+		}</script>
+  <script id="pineVShader" type="x-shader/x-vertex">
+    precision mediump float;
+		attribute vec4 vPosition;
+		attribute vec4 vColor;
+		varying vec4 fColor;
+		void main(){
+			fColor = vColor;
+			gl_Position = vPosition;
+		}
+		</script>
+  <script id="pineFShader" type="x-shader/x-fragment">
+    precision mediump float;
+		uniform float isDay;
+		varying vec4 fColor;
+		void main(){
+			if(isDay == 0.0) {
+				if(fColor == vec4(0.15, 0.3, 0.15, 1.0)) {
+					vec3 color;
+					color.r = fColor.r + gl_FragCoord.y * 0.0005;
+					color.g = fColor.g + gl_FragCoord.y * 0.0005;
+					color.b = fColor.b + gl_FragCoord.y * 0.0005;
+					gl_FragColor = vec4(color, fColor.a);
+				} else {
+					gl_FragColor = fColor;
+				}
+			} else {
+				vec3 color;
+				if(fColor == vec4(0.15, 0.3, 0.15, 1.0)) {
+					color.r = fColor.r + gl_FragCoord.y * 0.0005 - 0.2;
+					color.g = fColor.g + gl_FragCoord.y * 0.0005 - 0.2;
+					color.b = fColor.b + gl_FragCoord.y * 0.0005 - 0.2;
+					gl_FragColor = vec4(color, fColor.a);
+				} else {
+					gl_FragColor = vec4(fColor.r - 0.2, fColor.g - 0.2, fColor.b - 0.2, fColor.a);
+				}
+			}
+		}
+		</script>
+  <script type="text/javascript" src="ASS1.js"></script>
+  <script type="text/javascript" src="../../lib/cs465/initShaders.js"></script>
+  <script type="text/javascript" src="../../lib/cs465/MV.js"></script>
+  <script type="text/javascript" src="../Source/masterRenderer.js"></script>
+  <script type="text/javascript" src="../Source/terrainRenderer.js"></script>
+  <script type="text/javascript" src="../Source/sunRenderer.js"></script>
+  <script type="text/javascript" src="../Source/cloudRenderer.js"></script>
+  <script type="text/javascript" src="../Source/houseRenderer.js"></script>
+  <script type="text/javascript" src="../Source/house.js"></script>
+  <script type="text/javascript" src="../Source/bobbleRenderer.js"></script>
+  <script type="text/javascript" src="../Source/bobble.js"></script>
+  <script type="text/javascript" src="../Source/pineRenderer.js"></script>
+  <script type="text/javascript" src="../Source/pine.js"></script>
+</head>
+
+<body>
+  <canvas id="render-surface" width="1600" height="720">
+    Your browser doesn't support HTML5 canvas! upgrad.
+  </canvas>
+  <div style="padding: 10px; border: 2px dashed #a0a0a0; font-size: 16px; line-height: 16px; width: 415px; margin-top: 20px;">
+    <div>
+      <form class="pure-form">
+        <fieldset>
+          Number of Houses: <input type="number" id="hcSlider" class="green-input pure-input-rounded" min="1" max="4" step="1" value="4" placeholder="#" />
+          Max number of storeys: <input type="number" id="mscSlider" class="green-input pure-input-rounded" min="1" max="6" step="1" value="4" placeholder="#" />
+        </fieldset>
+      </form>
+    </div>
+    <div>
+      <button id="generateButton" class="green-button pure-button">Generate</button> <button id="day/night" class="green-button pure-button">Switch day/night</button>
+    </div>
+    <br>
+    <div>
+      <button id="saveButton" class="green-button pure-button" style="width: 109px;">Save State</button>
+      <br>
+      <div class="upload-btn-wrapper">
+        <button class="green-button pure-button">Load State</button>
+        <input type="file" id="loadButton" name="loadFile" />
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
