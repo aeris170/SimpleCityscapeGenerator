@@ -11,7 +11,7 @@ A simple cityscape generator. Written using plain WebGL. Draws numerous primitiv
   * Ability to toggle day/night.
   * Ability to save and load states.
   
-## Dependancies: 
+## Dependencies: 
   * Ed Angel & David Schreiner's MV.js and initShaders.js
 
 ## Instructions:
